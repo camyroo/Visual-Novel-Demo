@@ -1,0 +1,14 @@
+[
+  {
+    "id": "bob",
+    "displayName": "Bob",
+    "portraitKeys": ["happy", "sad"],
+    "portraitPaths": ["Characters/Bob/Bob_Happy", "Characters/Bob/Bob_Sad"]
+  },
+  {
+    "id": "luna",
+    "displayName": "Luna",
+    "portraitKeys": ["serious", "smile"],
+    "portraitPaths": ["Characters/Luna/Luna_Serious", "Characters/Luna/Luna_Smile"]
+  }
+]
