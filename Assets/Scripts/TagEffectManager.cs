@@ -9,6 +9,8 @@ public class TagEffectManager : MonoBehaviour
 
     public TextMeshProUGUI dialogueText;
     public Image backgroundImage_;
+
+    public Image jumpscareImage;
     public AudioSource sfxSource;
 
     void Awake()
@@ -21,10 +23,26 @@ public class TagEffectManager : MonoBehaviour
 
 public void HandleTags(List<string> tags)
 {
+    bool customEffectSet = false;
+
     foreach (string tag in tags)
     {
         Debug.Log($"Handling tag: {tag}");
 
+        // Set custom text effects
+        if (tag == "glitch")
+        {
+            InkManager.Instance.SetTextEffect(new GlitchTypewriterEffect());
+            customEffectSet = true;
+        }
+        else if (tag.StartsWith("flashglitch:"))
+        {
+            string glitchText = tag.Substring("flashglitch:".Length).Replace("_", " ");
+            InkManager.Instance.SetTextEffect(new FlashGlitchEffect(glitchText, 1.5f));
+            customEffectSet = true;
+        }
+
+        // Visual/audio effects
         switch (tag)
         {
             case "glitch":
@@ -39,49 +57,63 @@ public void HandleTags(List<string> tags)
                 break;
         }
     }
-}
 
-
-IEnumerator GlitchText()
-{
-    FontStyles originalStyle = dialogueText.fontStyle;
-    Color originalColor = dialogueText.color;
-
-    dialogueText.fontStyle = FontStyles.Italic;
-    dialogueText.color = Color.red;
-
-    yield return new WaitForSeconds(0.15f);
-
-    dialogueText.fontStyle = originalStyle;
-    dialogueText.color = originalColor;
-}
-
-
-    IEnumerator FlickerBG()
+    // Default to typewriter if no tag overrides it
+    if (!customEffectSet)
     {
-        for (int i = 0; i < 3; i++)
+        InkManager.Instance.SetTextEffect(new TypewriterEffect());
+    }
+}
+
+
+
+    IEnumerator GlitchText()
+    {
+        FontStyles originalStyle = dialogueText.fontStyle;
+        Color originalColor = dialogueText.color;
+
+        dialogueText.fontStyle = FontStyles.Italic;
+        dialogueText.color = Color.red;
+
+        yield return new WaitForSeconds(0.15f);
+
+        dialogueText.fontStyle = originalStyle;
+        dialogueText.color = originalColor;
+    }
+
+
+IEnumerator FlickerBG()
+{
+    for (int i = 0; i < 3; i++)
+    {
+        backgroundImage_.enabled = false;
+        jumpscareImage.enabled = true; // Show scary image
+        yield return new WaitForSeconds(0.2f);
+
+        backgroundImage_.enabled = true;
+        jumpscareImage.enabled = false; // Hide it again
+        yield return new WaitForSeconds(0.05f);
+    }
+
+    // Make sure it ends off
+    jumpscareImage.enabled = false;
+}
+
+
+    public void PlaySFX(string clipName)
+    {
+        Debug.Log($"Trying to load: SFX/{clipName}");
+        AudioClip clip = Resources.Load<AudioClip>($"SFX/{clipName}");
+        if (clip != null)
         {
-            backgroundImage_.enabled = false;
-            yield return new WaitForSeconds(0.1f);
-            backgroundImage_.enabled = true;
-            yield return new WaitForSeconds(0.05f);
+            sfxSource.PlayOneShot(clip);
+            Debug.Log("Clip played!");
+        }
+        else
+        {
+            Debug.LogWarning($"SFX clip not found: {clipName}");
         }
     }
-
-public void PlaySFX(string clipName)
-{
-    Debug.Log($"Trying to load: SFX/{clipName}");
-    AudioClip clip = Resources.Load<AudioClip>($"SFX/{clipName}");
-    if (clip != null)
-    {
-        sfxSource.PlayOneShot(clip);
-        Debug.Log("Clip played!");
-    }
-    else
-    {
-        Debug.LogWarning($"SFX clip not found: {clipName}");
-    }
-}
 
 
 }

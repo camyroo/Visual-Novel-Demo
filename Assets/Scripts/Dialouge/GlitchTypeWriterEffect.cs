@@ -19,10 +19,10 @@ public class GlitchTypewriterEffect : ITextEffect
 
             dialogueText.text += c;
 
-            if (Random.value < 0.05f)
+            if (UnityEngine.Random.value < 0.05f)
                 dialogueText.text += "<alpha=#00>" + c + "</alpha>";
 
-            yield return new WaitForSeconds(speed * Random.Range(0.5f, 1.2f));
+            yield return new WaitForSeconds(speed * UnityEngine.Random.Range(0.5f, 1.2f));
         }
     }
 }

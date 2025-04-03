@@ -7,6 +7,8 @@ using System.Collections.Generic;
 
 public class InkManager : MonoBehaviour
 {
+    public static InkManager Instance { get; private set; }
+    private ITextEffect currentTextEffect;
 
     [Header("Background")]
     public Image backgroundImage;
@@ -30,11 +32,24 @@ public class InkManager : MonoBehaviour
     private bool isTyping = false;
     private bool skipTyping = false;
 
+    void Awake()
+    {
+        Instance = this;
+    }
+
     void Start()
     {
         story = new Story(inkJSONAsset.text);
+        currentTextEffect = new TypewriterEffect(); // Default effect
         ContinueStory();
     }
+
+    public void SetTextEffect(ITextEffect effect)
+    {
+        currentTextEffect = effect;
+    }
+
+
 
     void ContinueStory()
     {
@@ -123,22 +138,13 @@ public class InkManager : MonoBehaviour
     {
         isTyping = true;
         skipTyping = false;
-        dialogueText.text = "";
 
-        foreach (char c in line)
-        {
-            if (skipTyping)
-            {
-                dialogueText.text = line;
-                break;
-            }
-
-            dialogueText.text += c;
-            yield return new WaitForSeconds(typewriterSpeed);
-        }
+        yield return StartCoroutine(currentTextEffect.Run(
+            line, dialogueText, typewriterSpeed, () => skipTyping));
 
         isTyping = false;
     }
+
 
     void ShowChoices()
     {

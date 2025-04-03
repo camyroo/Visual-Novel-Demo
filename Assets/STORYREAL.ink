@@ -44,6 +44,7 @@ Luna: Good. Bring a flashlight. And try not to listen if they start whispering t
 ~ speaker = "luna"
 ~ portrait = "serious"
 Luna: Then lock the door behind me. If I'm not back by dawn... don't open it. #glitch
+???: Don't trust Luna. #flashglitch:SHE_WILL_KILL_YOU
 -> endMission
 
 == endMission ==
