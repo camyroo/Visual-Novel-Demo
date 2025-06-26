@@ -1,4 +1,4 @@
-This is a visual novel tech demo I made in unity which was designed to be fully scalled.
+This is a visual novel tech demo I made in unity which was designed to be fully scaled in the future.
 
 Includes:
   Ink: Integration for branching and dialouge loading
